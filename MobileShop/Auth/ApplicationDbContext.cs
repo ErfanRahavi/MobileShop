@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MobileShop.Models;
 
 namespace MobileShop.Auth
 {
@@ -13,5 +14,6 @@ namespace MobileShop.Auth
         {
             base.OnModelCreating(builder);
         }
+        public DbSet<Mobile> Mobiles { get; set; }
     }
 }
