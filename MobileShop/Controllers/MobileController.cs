@@ -102,5 +102,6 @@ namespace MobileShop.Controllers
         {
             return _context.Mobiles.Any(e => e.Id == id);
         }
+
     }
 }

@@ -13,5 +13,7 @@ namespace MobileShop.Models
         public required decimal Price { get; set; }
         public string? ImageUrl { get; set; }
         public int Stock { get; set; }
+        public string? Brand { get; set; }  
+        public int Year { get; set; }
     }
 }
