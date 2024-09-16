@@ -15,5 +15,7 @@ namespace MobileShop.Auth
             base.OnModelCreating(builder);
         }
         public DbSet<Mobile> Mobiles { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
     }
 }
