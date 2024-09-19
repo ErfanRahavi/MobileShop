@@ -36,6 +36,7 @@ namespace MobileShop.Controllers
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
                 };
                 foreach (var userRole in userRoles)
                 {

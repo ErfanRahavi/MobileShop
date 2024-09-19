@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MobileShop.Auth;
 using MobileShop.Models;
+using System.Security.Claims;
 
 namespace MobileShop.Controllers
 {
@@ -26,27 +26,29 @@ namespace MobileShop.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrder(int mobileId, int quantity)
         {
-            var user = await _userManager.GetUserAsync(User);
             
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
             if (user == null)
             {
-                return Unauthorized("User is not authenticated.");
+                return Unauthorized("User not found in the database.");
             }
 
             
             var mobile = await _context.Mobiles.FindAsync(mobileId);
             if (mobile == null)
-                return NotFound("Mobile not found");
+                return NotFound("Mobile not found.");
 
             if (mobile.Stock < quantity)
-                return BadRequest("Not enough stock available");
+                return BadRequest("Not enough stock available.");
 
             
             var order = new Order
             {
-                UserId = user.Id,
+                UserId = user.Id,  
                 MobileId = mobileId,
                 Quantity = quantity,
                 OrderDate = DateTime.UtcNow
@@ -59,24 +61,25 @@ namespace MobileShop.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok("Order created successfully");
+            return Ok("Order created successfully.");
         }
 
         
         [HttpGet("MyOrders")]
         public async Task<IActionResult> GetMyOrders()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            
             var orders = await _context.Orders
-                .Where(o => o.UserId == user.Id)
+                .Where(o => o.UserId == userId)
                 .Include(o => o.Mobile)
                 .ToListAsync();
 
             return Ok(orders);
         }
 
-
+        
         [HttpGet("AllOrders")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllOrders()
